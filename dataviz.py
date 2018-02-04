@@ -50,49 +50,52 @@ class plot_handler():
             self.ax[plot_name].set_ylim([0,ylim])
             
        
-
 def create_transform(data, labels, time_steps=20, delay=200):
     frame_data = []  
     rows, cols = data.shape
     
-    last_x = None
-    last_y = None
+    curr_i = 0
+    curr_j = 0
+    next_i = 1
+    next_j = 1
     
-    for i, x in enumerate(headers):     
-        for j, y in enumerate(reversed(headers)):
+    while next_i < cols:     
+        next_j = next_i # don't repeat previous comparisons
+        while next_j < cols:
 
-            if not last_x: 
-                last_x = x
-                last_i = i
+            x_title = headers[curr_i]
+            y_title = headers[curr_j]
+            x_data = data[:, curr_i]
             
-            if not last_y: 
-                last_y = y
-                last_j = j
-                
-            x_title = last_x
-            y_title = last_y
-            x_data = data[:, last_i]
-            
-            # Create the transition data between each column
-            y_data = np.array([np.linspace(data[r, last_j], 
-                                                data[r, j], 
+            # Create the transitioning y data
+            y_data = np.array([np.linspace(data[r, curr_j], 
+                                                data[r, next_j], 
                                                 time_steps) for r in range(rows)])
     
             # Create a list of frames for the transition
             for t in range(delay):
-                frame_data += [(x_title, y_title, x_data, data[:, last_j])]
+                frame_data += [(x_title, y_title, x_data, data[:, curr_j])]
                 
             for t in range(time_steps):
                 frame_data += [(x_title, y_title, x_data, y_data[:, t])]
                 
-            last_y = y
-            last_j = j
+            curr_j = next_j
+            next_j += 1
         
-        last_x = x
-        last_i = i
+        # Create transitioning x data
+        x_data = np.array([np.linspace(data[r, curr_i],
+                                       data[r, next_i],
+                                       time_steps) for r in range(rows)])
+        # Add Frames
+        for t in range(time_steps):
+            frame_data += [(x_title, y_title, x_data[:, t], y_data[:, -1])]
+    
+        curr_i = next_i
+        next_i += 1
         
     return frame_data
             
+
 def data_feed(data):
     while True:
         yield data.pop(0)
@@ -103,13 +106,13 @@ def animate(data_packet):
     line.set_xdata(x_data)
     line.set_ydata(y_data)
     
-    ax.set_xlim(x_data.min(), x_data.max())
-    ax.set_ylim(y_data.min(), y_data.max())
+    ax1.set_xlim(x_data.min(), x_data.max())
+    ax1.set_ylim(y_data.min(), y_data.max())
     
-    xttl.set_text(x_title)
-    yttl.set_text(y_title)
+    x1_ttl.set_text(x_title)
+    y1_ttl.set_text(y_title)
     
-    return line, xttl, yttl
+    return line, x1_ttl, y1_ttl
 
 def _blit_draw(self, artists, bg_cache):
     # Handles blitted drawing, which renders only the artists given instead
@@ -146,7 +149,7 @@ if __name__ == "__main__":
     data = create_transform(x_train, 
                             y_train, 
                             time_steps=30, 
-                            delay=50)
+                            delay=5)
     
     fig = plt.figure(figsize=(8,8))
     
@@ -158,27 +161,17 @@ if __name__ == "__main__":
               top=0.8, 
               bottom=0.1)
 #    
-    ax = fig.add_subplot(gs[1:5, 0:4])
-#    
-#    ax2 = fig.add_subplot(gs[0:1,0:4])
-    ax.set_xticks([])
-    ax.set_yticks([])
-#    ax2.set_title('Tester')
-#    
-#    ax3 = fig.add_subplot(gs[1:5, 4:5])
-#    ax3.set_xticks([])
-#    ax3.set_yticks([])
-#    ax3.set_title('tester2')
-#    
-    line, = ax.plot(data[0][2], data[0][3], 'o')
-#    hist, = ax2.plot()
-    x_max = np.max(8)
-    x_min = np.min(-8)
-    xttl = ax.text(.5, -0.1, 'test', 
-                   transform = ax.transAxes, 
+    ax1 = fig.add_subplot(gs[1:5, 0:4])
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+
+    line, = ax1.plot(data[0][2], data[0][3], 'o')
+    
+    x1_ttl = ax1.text(.5, -0.1, 'test', 
+                   transform = ax1.transAxes, 
                    fontweight='bold', fontsize=12)
-    yttl = ax.text(-.10, .5, 'test2', 
-                   transform = ax.transAxes, 
+    y1_ttl = ax1.text(-.10, .5, 'test2', 
+                   transform = ax1.transAxes, 
                    rotation=90, 
                    fontweight='bold', fontsize=12)
     
