@@ -11,6 +11,12 @@ from matplotlib import gridspec
 from matplotlib import animation
 from keras.datasets import boston_housing
 from sklearn import preprocessing as p
+import matplotlib.patches as patches
+import matplotlib.path as path
+from matplotlib import rc
+from IPython.display import HTML
+
+rc('animation', html='html5')  # sets animation display from none to html5
 
 class plot_handler():
     """
@@ -112,7 +118,24 @@ def animate(data_packet):
     x1_ttl.set_text(x_title)
     y1_ttl.set_text(y_title)
     
-    return line, x1_ttl, y1_ttl
+    
+    freq, xbins, ybins = np.histogram2d(x_data, 
+                                        y_data, 
+                                        bins=nbins)
+    
+    bottom = np.zeros(nbins)
+    x_top = bottom + freq[0]
+    y_top = bottom + freq[1]
+    
+    verts[0, 1::5, 1] = x_top
+    verts[1, 1::5, 0] = y_top
+    verts[0, 2::5, 1] = x_top
+    verts[1, 2::5, 0] = y_top
+    
+    ax2.set_ylim(bottom.min(), x_top.max())
+    ax3.set_xlim(bottom.min(), y_top.max())
+    
+    return line, x1_ttl, y1_ttl, x_patch, y_patch,
 
 def _blit_draw(self, artists, bg_cache):
     # Handles blitted drawing, which renders only the artists given instead
@@ -146,10 +169,10 @@ if __name__ == "__main__":
     (x_train, y_train), (x_test, y_test) = boston_housing.load_data()
 
     x_train = p.StandardScaler().fit_transform(x_train)
-    data = create_transform(x_train, 
-                            y_train, 
-                            time_steps=30, 
-                            delay=5)
+    data_series = create_transform(x_train, 
+                                   y_train, 
+                                   time_steps=30, 
+                                   delay=5)
     
     fig = plt.figure(figsize=(8,8))
     
@@ -160,24 +183,103 @@ if __name__ == "__main__":
               hspace=.1,
               top=0.8, 
               bottom=0.1)
-#    
+
+    # Main Plot
     ax1 = fig.add_subplot(gs[1:5, 0:4])
     ax1.set_xticks([])
     ax1.set_yticks([])
-
-    line, = ax1.plot(data[0][2], data[0][3], 'o')
-    
-    x1_ttl = ax1.text(.5, -0.1, 'test', 
+    x1_ttl = ax1.text(.5, -0.1, '', 
                    transform = ax1.transAxes, 
                    fontweight='bold', fontsize=12)
-    y1_ttl = ax1.text(-.10, .5, 'test2', 
+    y1_ttl = ax1.text(-.10, .5, '', 
                    transform = ax1.transAxes, 
                    rotation=90, 
-                   fontweight='bold', fontsize=12)
+                   fontweight='bold', 
+                   fontsize=12)
+    
+    # Top Histogram
+    ax2 = fig.add_subplot(gs[0:1, 0:4])
+    ax2.set_xticks([])
+    ax2.set_yticks([])
+    
+    # Right Histogram
+    ax3 = fig.add_subplot(gs[1:5, 4:5])
+    ax3.set_xticks([])
+    ax3.set_yticks([])
+    
+    nbins = 20  # unmber of bins
+    freq, xbins, ybins = np.histogram2d(data_series[0][2], 
+                                        data_series[0][3], 
+                                        bins=nbins)
+    
+    # get edges of histogram bars
+    x_left = np.array(xbins[:-1])
+    y_left = np.array(ybins[:-1])
+    x_right = np.array(xbins[:-1])
+    y_right = np.array(ybins[:-1])
+    x_bottom = np.zeros(nbins)
+    y_bottom = np.zeros(nbins)
+    x_top = freq[0]
+    y_top = freq[1]
+ 
+    num_verts = nbins * (1 + 3 + 1) # 1 move to, 3 vertices, 1 close poly
+    verts = np.zeros(shape=(2, num_verts, 2))  # (axis, value, coordinate)
+    
+    # x axis
+    verts[0, 0::5, 0] = x_left
+    verts[0, 0::5, 1] = x_bottom
+    verts[0, 1::5, 0] = x_left
+    verts[0, 1::5, 1] = x_top
+    verts[0, 2::5, 0] = x_right
+    verts[0, 2::5, 1] = x_top
+    verts[0, 3::5, 0] = x_right
+    verts[0, 3::5, 1] = x_bottom
+
+    # y axis
+    verts[1, 0::5, 0] = y_bottom
+    verts[1, 0::5, 1] = y_left
+    verts[1, 1::5, 0] = y_top
+    verts[1, 1::5, 1] = y_left
+    verts[1, 2::5, 0] = y_top
+    verts[1, 2::5, 1] = y_right
+    verts[1, 3::5, 0] = y_bottom
+    verts[1, 3::5, 1] = y_right
+    
+    # Drawing Codes
+    codes = np.ones((num_verts), int) * path.Path.LINETO  # Instructions
+    codes[0::5] = path.Path.MOVETO
+    codes[4::5] = path.Path.CLOSEPOLY
+    
+    x_patch = None  # store object later
+    y_patch = None
+    
+    x_path = path.Path(verts[0], codes)
+    y_path = path.Path(verts[1], codes)
+    
+    x_patch = patches.PathPatch(x_path, 
+                                facecolor='blue', 
+                                edgecolor='blue', 
+                                linewidth=14,
+                                alpha=.5)
+    y_patch = patches.PathPatch(y_path, 
+                                facecolor='blue', 
+                                edgecolor='blue',
+                                linewidth=14,
+                                alpha=.5)
+    
+    ax2.add_patch(x_patch)
+    ax3.add_patch(y_patch)
+    
+    ax2.set_xlim(xbins[0], xbins[-1])
+    ax3.set_ylim(ybins[0], ybins[-1])
+    ax2.set_ylim(x_bottom.min(), x_top.max())
+    ax3.set_xlim(y_bottom.min(), y_top.max())
+    
+    line, = ax1.plot(data_series[0][2], data_series[0][3], 'o')
     
     anim = animation.FuncAnimation(fig, 
                                    animate,
-                                   frames=data_feed(data),blit=True,
+                                   frames=data_feed(data_series),blit=True,
                                    interval=10)
 
 #    anim.save('test_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
