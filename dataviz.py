@@ -14,7 +14,7 @@ from sklearn import preprocessing as p
 import matplotlib.patches as patches
 import matplotlib.path as path
 from matplotlib import rc
-from IPython.display import HTML
+from matplotlib.font_manager import FontProperties
 
 rc('animation', html='html5')  # sets animation display from none to html5
 
@@ -117,15 +117,12 @@ def animate(data_packet):
     
     x1_ttl.set_text(x_title)
     y1_ttl.set_text(y_title)
-    
-    
-    freq, xbins, ybins = np.histogram2d(x_data, 
-                                        y_data, 
-                                        bins=nbins)
-    
+    xn, xbins = np.histogram(x_data, bins=nbins)
+    yn, ybins = np.histogram(y_data, bins=nbins)
+
     bottom = np.zeros(nbins)
-    x_top = bottom + freq[0]
-    y_top = bottom + freq[1]
+    x_top = bottom + xn  # freq[0]
+    y_top = bottom + yn  # freq[1]
     
     verts[0, 1::5, 1] = x_top
     verts[1, 1::5, 0] = y_top
@@ -135,7 +132,7 @@ def animate(data_packet):
     ax2.set_ylim(bottom.min(), x_top.max())
     ax3.set_xlim(bottom.min(), y_top.max())
     
-    return line, x1_ttl, y1_ttl, x_patch, y_patch,
+    return line, x1_ttl, y1_ttl, x_patch, y_patch, 
 
 def _blit_draw(self, artists, bg_cache):
     # Handles blitted drawing, which renders only the artists given instead
@@ -161,56 +158,78 @@ def _blit_draw(self, artists, bg_cache):
 if __name__ == "__main__":
 
     # MONKEY PATCH!!
-#    matplotlib.animation.Animation._blit_draw = _blit_draw
+    animation.Animation._blit_draw = _blit_draw
     
-    headers = ["CRIM", "ZN","INDUS", "CHAS", "NOX", "RM", "AGE", "DIS", 
-                "RAD", "TAX", "PTRATIO", "B", "LSTAT"]
+    headers = ["Per Capita Crime", 
+               "Zoned over 25k sq-ft",
+               "Non-retail Acres Per Town", 
+               "On the Charles?",
+               "NO2 Levels ppm",
+               "Ave Number of Rooms",
+               "Portion 40+ y.o Houses",
+               "Distance to City", 
+               "Highway Accesibility",
+               "Property Tax Rate",
+               "Pupil-Teacher Ratio",
+               "Portion of African-American",
+               "Percent Lower Status"]
     
     (x_train, y_train), (x_test, y_test) = boston_housing.load_data()
 
     x_train = p.StandardScaler().fit_transform(x_train)
     data_series = create_transform(x_train, 
                                    y_train, 
-                                   time_steps=30, 
-                                   delay=5)
+                                   time_steps=60, 
+                                   delay=40)
     
-    fig = plt.figure(figsize=(8,8))
+    fig = plt.figure(figsize=(6,6))
     
-    gs = gridspec.GridSpec(5,5)
+    gs = gridspec.GridSpec(6,6)
     gs.update(left=0.1,  
-              right=0.8, 
+              right=0.95, 
               wspace=0.2,
               hspace=.1,
-              top=0.8, 
+              top=0.95, 
               bottom=0.1)
 
     # Main Plot
-    ax1 = fig.add_subplot(gs[1:5, 0:4])
+    ax1 = fig.add_subplot(gs[2:6, 0:4])
     ax1.set_xticks([])
     ax1.set_yticks([])
     x1_ttl = ax1.text(.5, -0.1, '', 
-                   transform = ax1.transAxes, 
-                   fontweight='bold', fontsize=12)
-    y1_ttl = ax1.text(-.10, .5, '', 
-                   transform = ax1.transAxes, 
-                   rotation=90, 
-                   fontweight='bold', 
-                   fontsize=12)
+                      horizontalalignment='center',
+                      transform = ax1.transAxes, 
+                      fontweight='bold', fontsize=12)
+    y1_ttl = ax1.text(-0.1, .5, '', 
+                      transform = ax1.transAxes, 
+                      horizontalalignment='left',
+                      verticalalignment='center',
+                      rotation=90, 
+                      fontweight='bold', # bbox=dict(facecolor='red', alpha=0.5),
+                      fontsize=12)
     
+    ax1.spines['bottom'].set_color('#666B73')
+    ax1.spines['top'].set_color('white') 
+    ax1.spines['right'].set_color('white')
+    ax1.spines['left'].set_color('#666B73')
+              
     # Top Histogram
-    ax2 = fig.add_subplot(gs[0:1, 0:4])
+    ax2 = fig.add_subplot(gs[1:2, 0:4])
     ax2.set_xticks([])
     ax2.set_yticks([])
+    ax2.axes.set_axis_off()
     
     # Right Histogram
-    ax3 = fig.add_subplot(gs[1:5, 4:5])
+    ax3 = fig.add_subplot(gs[2:6, 4:5])
     ax3.set_xticks([])
     ax3.set_yticks([])
+    ax3.axes.set_axis_off()
     
+    # Histograms
     nbins = 20  # unmber of bins
-    freq, xbins, ybins = np.histogram2d(data_series[0][2], 
-                                        data_series[0][3], 
-                                        bins=nbins)
+    xn, xbins = np.histogram(data_series[0][2], bins=nbins)
+    yn, ybins = np.histogram(data_series[0][3], bins=nbins)
+    
     
     # get edges of histogram bars
     x_left = np.array(xbins[:-1])
@@ -219,8 +238,8 @@ if __name__ == "__main__":
     y_right = np.array(ybins[:-1])
     x_bottom = np.zeros(nbins)
     y_bottom = np.zeros(nbins)
-    x_top = freq[0]
-    y_top = freq[1]
+    x_top = xn  # freq[0]
+    y_top = yn  # freq[1]
  
     num_verts = nbins * (1 + 3 + 1) # 1 move to, 3 vertices, 1 close poly
     verts = np.zeros(shape=(2, num_verts, 2))  # (axis, value, coordinate)
@@ -257,15 +276,15 @@ if __name__ == "__main__":
     y_path = path.Path(verts[1], codes)
     
     x_patch = patches.PathPatch(x_path, 
-                                facecolor='blue', 
-                                edgecolor='blue', 
-                                linewidth=14,
-                                alpha=.5)
+                                facecolor='#FA6367', 
+                                edgecolor='#78C9EC', 
+                                linewidth=15,
+                                alpha=1)
     y_patch = patches.PathPatch(y_path, 
-                                facecolor='blue', 
-                                edgecolor='blue',
-                                linewidth=14,
-                                alpha=.5)
+                                facecolor='#FA6367', 
+                                edgecolor='#78C9EC',
+                                linewidth=15,
+                                alpha=1)
     
     ax2.add_patch(x_patch)
     ax3.add_patch(y_patch)
@@ -275,11 +294,24 @@ if __name__ == "__main__":
     ax2.set_ylim(x_bottom.min(), x_top.max())
     ax3.set_xlim(y_bottom.min(), y_top.max())
     
-    line, = ax1.plot(data_series[0][2], data_series[0][3], 'o')
+    line, = ax1.plot(data_series[0][2], data_series[0][3], 'o', c='#FA6367',
+                     markerfacecolor='#FEEAA8', markersize=5)
+    
+    font = FontProperties()
+    font.set_family('cursive')
+    
+    fig.suptitle('Multivariate Analysis', x=0.38, y=0.85, 
+                 horizontalalignment='center',
+                 fontsize=16,
+                 fontweight='bold',
+                 fontproperties='cursive')
     
     anim = animation.FuncAnimation(fig, 
                                    animate,
-                                   frames=data_feed(data_series),blit=True,
+                                   frames=data_feed(data_series),
                                    interval=10)
-
-#    anim.save('test_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+    mywriter = animation.FFMpegWriter()
+    anim.save('test_animation.mp4', 
+              writer=mywriter, 
+              fps=30, 
+              extra_args=['-vcodec', 'libx264'])
