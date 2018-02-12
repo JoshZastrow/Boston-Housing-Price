@@ -156,18 +156,18 @@ def _blit_draw(self, artists, bg_cache):
         ax.figure.canvas.blit(ax.figure.bbox)
 
 
-class multivariate_animator():
+class multivariate_animator(animation.TimedAnimation):
     
     def __init__(self):
 #        font = FontProperties()
 #        font.set_family('cursive')
-        
         self.fig = plt.figure(figsize=(6,6))
         self.fig.suptitle('Multivariate Analysis', x=0.38, y=0.85, 
                          horizontalalignment='center',
                          fontsize=16,
                          fontweight='bold')
         
+        # Subplot layout       
         self.gs = gridspec.GridSpec(6,6)
         self.gs.update(left=0.1,  
                        right=0.95, 
@@ -175,27 +175,24 @@ class multivariate_animator():
                        hspace=.1,
                        top=0.95, 
                        bottom=0.1)
-    
-        # Main Plot
+
         self.ax1 = self.fig.add_subplot(self.gs[2:6, 0:4])
+        self.ax2 = self.fig.add_subplot(self.gs[1:2, 0:4])
+        self.ax3 = self.fig.add_subplot(self.gs[2:6, 4:5])
+
         self.ax1.set_xticks([])
         self.ax1.set_yticks([])
+        self.ax2.set_xticks([])
+        self.ax2.set_yticks([])
+        self.ax3.set_xticks([])
+        self.ax3.set_yticks([])
         
         self.ax1.spines['bottom'].set_color('#666B73')
         self.ax1.spines['top'].set_color('white') 
         self.ax1.spines['right'].set_color('white')
         self.ax1.spines['left'].set_color('#666B73')
                   
-        # Top Histogram
-        self.ax2 = self.fig.add_subplot(self.gs[1:2, 0:4])
-        self.ax2.set_xticks([])
-        self.ax2.set_yticks([])
         self.ax2.axes.set_axis_off()
-        
-        # Right Histogram
-        self.ax3 = self.fig.add_subplot(self.gs[2:6, 4:5])
-        self.ax3.set_xticks([])
-        self.ax3.set_yticks([])
         self.ax3.axes.set_axis_off()
         
         # Headers
@@ -217,102 +214,15 @@ class multivariate_animator():
         
         x_train = p.StandardScaler().fit_transform(x_train)
         self.data_series = create_transform(x_train, 
-                                       y_train, 
-                                       time_steps=60, 
-                                       delay=40)        
+                                            y_train, 
+                                            time_steps=60, 
+                                            delay=40)        
     
-    
-    def _create_histograms(self, data_series):
+        self._create_histograms()
+        self._create_scatter()
         
-        # Histograms
-        self.nbins = 20  # unmber of bins
-        xn, xbins = np.histogram(self.data_series[0][2], bins=self.nbins)
-        yn, ybins = np.histogram(self.data_series[0][3], bins=self.nbins)
-        
-        # get edges of histogram bars
-        x_left = np.array(xbins[:-1])
-        y_left = np.array(ybins[:-1])
-        x_right = np.array(xbins[:-1])
-        y_right = np.array(ybins[:-1])
-        x_bottom = np.zeros(self.nbins)
-        y_bottom = np.zeros(self.nbins)
-        x_top = xn  # freq[0]
-        y_top = yn  # freq[1]
-     
-        num_verts = self.nbins * (1 + 3 + 1) # 1 move to, 3 vertices, 1 close poly
-        self.verts = np.zeros(shape=(2, num_verts, 2))  # (axis, value, coordinate)
-        
-        # x axis
-        self.verts[0, 0::5, 0] = x_left
-        self.verts[0, 0::5, 1] = x_bottom
-        self.verts[0, 1::5, 0] = x_left
-        self.verts[0, 1::5, 1] = x_top
-        self.verts[0, 2::5, 0] = x_right
-        self.verts[0, 2::5, 1] = x_top
-        self.verts[0, 3::5, 0] = x_right
-        self.verts[0, 3::5, 1] = x_bottom
-    
-        # y axis
-        self.verts[1, 0::5, 0] = y_bottom
-        self.verts[1, 0::5, 1] = y_left
-        self.verts[1, 1::5, 0] = y_top
-        self.verts[1, 1::5, 1] = y_left
-        self.verts[1, 2::5, 0] = y_top
-        self.verts[1, 2::5, 1] = y_right
-        self.verts[1, 3::5, 0] = y_bottom
-        self.verts[1, 3::5, 1] = y_right
-        
-        # Drawing Codes
-        codes = np.ones((num_verts), int) * path.Path.LINETO  # Instructions
-        codes[0::5] = path.Path.MOVETO
-        codes[4::5] = path.Path.CLOSEPOLY
-        
-        x_patch = None  # store object later
-        y_patch = None
-        
-        x_path = path.Path(self.verts[0], codes)
-        y_path = path.Path(self.verts[1], codes)
-        
-        self.x_patch = patches.PathPatch(x_path, 
-                                    facecolor='#FA6367', 
-                                    edgecolor='#78C9EC', 
-                                    linewidth=15,
-                                    alpha=1)
-        self.y_patch = patches.PathPatch(y_path, 
-                                    facecolor='#FA6367', 
-                                    edgecolor='#78C9EC',
-                                    linewidth=15,
-                                    alpha=1)
-        
-        self.ax2.add_patch(x_patch)
-        self.ax3.add_patch(y_patch)
-        
-        self.ax2.set_xlim(xbins[0], xbins[-1])
-        self.ax3.set_ylim(ybins[0], ybins[-1])
-        self.ax2.set_ylim(x_bottom.min(), x_top.max())
-        self.ax3.set_xlim(y_bottom.min(), y_top.max())
-        
-    def _create_scatter(self):
-        
-        self.x1_ttl = self.ax1.text(.5, -0.1, '', 
-                              horizontalalignment='center',
-                              transform = self.ax1.transAxes, 
-                              fontweight='bold', fontsize=12)
-        
-        self.y1_ttl = self.ax1.text(-0.1, .5, '', 
-                              transform = self.ax1.transAxes, 
-                              horizontalalignment='left',
-                              verticalalignment='center',
-                              rotation=90, 
-                              fontweight='bold', # bbox=dict(facecolor='red', alpha=0.5),
-                              fontsize=12)
-        self.line = [self.ax1.plot(
-                         self.data_series[0][2], 
-                         self.data_series[0][3], 
-                         'o', c='#FA6367',
-                         markerfacecolor='#FEEAA8', 
-                         markersize=5)]
-                            
+        animation.TimedAnimation.__init__(self, self.fig, interval=50, blit=True)
+
     def create_transform(self, data, labels, time_steps=20, delay=200):
         frame_data = []  
         rows, cols = data.shape
@@ -358,14 +268,104 @@ class multivariate_animator():
             
         return frame_data
                 
+        
+    def _create_histograms(self):
+        
+        # Histograms
+        self.nbins = 20  # unmber of bins
+        xn, xbins = np.histogram(self.data_series[0][2], bins=self.nbins)
+        yn, ybins = np.histogram(self.data_series[0][3], bins=self.nbins)
+        
+        # get edges of histogram bars
+        x_left = np.array(xbins[:-1])
+        y_left = np.array(ybins[:-1])
+        x_right = np.array(xbins[:-1])
+        y_right = np.array(ybins[:-1])
+        x_bottom = np.zeros(self.nbins)
+        y_bottom = np.zeros(self.nbins)
+        x_top = xn  # freq[0]
+        y_top = yn  # freq[1]
+     
+        num_verts = self.nbins * (1 + 3 + 1) # 1 move to, 3 vertices, 1 close poly
+        self.verts = np.zeros(shape=(2, num_verts, 2))  # (axis, value, coordinate)
+        
+        # x axis
+        self.verts[0, 0::5, 0] = x_left
+        self.verts[0, 0::5, 1] = x_bottom
+        self.verts[0, 1::5, 0] = x_left
+        self.verts[0, 1::5, 1] = x_top
+        self.verts[0, 2::5, 0] = x_right
+        self.verts[0, 2::5, 1] = x_top
+        self.verts[0, 3::5, 0] = x_right
+        self.verts[0, 3::5, 1] = x_bottom
     
-    def data_feed(data):
+        # y axis
+        self.verts[1, 0::5, 0] = y_bottom
+        self.verts[1, 0::5, 1] = y_left
+        self.verts[1, 1::5, 0] = y_top
+        self.verts[1, 1::5, 1] = y_left
+        self.verts[1, 2::5, 0] = y_top
+        self.verts[1, 2::5, 1] = y_right
+        self.verts[1, 3::5, 0] = y_bottom
+        self.verts[1, 3::5, 1] = y_right
+        
+        # Drawing Codes
+        codes = np.ones((num_verts), int) * path.Path.LINETO  # Instructions
+        codes[0::5] = path.Path.MOVETO
+        codes[4::5] = path.Path.CLOSEPOLY
+         
+        x_path = path.Path(self.verts[0], codes)
+        y_path = path.Path(self.verts[1], codes)
+        
+        self.x_patch = patches.PathPatch(x_path, 
+                                    facecolor='#FA6367', 
+                                    edgecolor='#78C9EC', 
+                                    linewidth=15,
+                                    alpha=1)
+        self.y_patch = patches.PathPatch(y_path, 
+                                    facecolor='#FA6367', 
+                                    edgecolor='#78C9EC',
+                                    linewidth=15,
+                                    alpha=1)
+        
+        self.ax2.add_patch(self.x_patch)
+        self.ax3.add_patch(self.y_patch)
+        
+        self.ax2.set_xlim(xbins[0], xbins[-1])
+        self.ax3.set_ylim(ybins[0], ybins[-1])
+        self.ax2.set_ylim(x_bottom.min(), x_top.max())
+        self.ax3.set_xlim(y_bottom.min(), y_top.max())
+        
+    def _create_scatter(self):
+        
+        self.x1_ttl = self.ax1.text(.5, -0.1, '', 
+                              horizontalalignment='center',
+                              transform = self.ax1.transAxes, 
+                              fontweight='bold', fontsize=12)
+        
+        self.y1_ttl = self.ax1.text(-0.1, .5, '', 
+                              transform = self.ax1.transAxes, 
+                              horizontalalignment='left',
+                              verticalalignment='center',
+                              rotation=90, 
+                              fontweight='bold', # bbox=dict(facecolor='red', alpha=0.5),
+                              fontsize=12)
+        self.line = [self.ax1.plot(
+                         self.data_series[0][2], 
+                         self.data_series[0][3], 
+                         'o', c='#FA6367',
+                         markerfacecolor='#FEEAA8', 
+                         markersize=5)]
+                            
+
+    
+    def data_feed(self, data):
         while True:
             yield data.pop(0)
             
-    def animate(self, data_packet):
-        x_title, y_title, x_data, y_data = data_packet
+    def _draw_frame(self, framedata):
         
+        x_title, y_title, x_data, y_data = framedata
         self.line.set_xdata(x_data)
         self.line.set_ydata(y_data)
         
@@ -389,25 +389,12 @@ class multivariate_animator():
         self.ax2.set_ylim(bottom.min(), x_top.max())
         self.ax3.set_xlim(bottom.min(), y_top.max())
         
-        return self.line, self.x1_ttl, self.y1_ttl, self.x_patch, self.y_patch, 
+        self.drawn_artis = [self.line, 
+                            self.x1_ttl, 
+                            self.y1_ttl, 
+                            self.x_patch, 
+                            self.y_patch]
 
-    def __call__(self):
-        self._create_histograms()
-        self._create_scatter()
-        
-        anim = animation.FuncAnimation(self.fig, 
-                                       animate,
-                                       frames=data_feed(self.data_series),
-                                       interval=10)
-        return anim
-        
-        
-#        mywriter = animation.FFMpegWriter()
-#        anim.save('test_animation.mp4', 
-#                  writer=mywriter, 
-#                  fps=30, 
-#                  extra_args=['-vcodec', 'libx264'])
-#        
 if __name__ == "__main__":
 #
 #    # MONKEY PATCH!!
@@ -426,7 +413,10 @@ if __name__ == "__main__":
                "Pupil-Teacher Ratio",
                "Portion of African-American",
                "Percent Lower Status"]
-#    
+
+    ani = multivariate_animator()
+    plt.show()
+    
 #    (x_train, y_train), (x_test, y_test) = boston_housing.load_data()
 #
 #    x_train = p.StandardScaler().fit_transform(x_train)
@@ -572,5 +562,5 @@ if __name__ == "__main__":
 #              fps=30, 
 #              extra_args=['-vcodec', 'libx264'])
     
-    viz = multivariate_animator()
-    multivariate_animator()
+#    viz = multivariate_animator()
+#    viz()
