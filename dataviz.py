@@ -10,7 +10,6 @@ from matplotlib import pyplot as plt
 from matplotlib import gridspec
 from matplotlib import animation
 from keras.datasets import boston_housing
-from sklearn import preprocessing as p
 import matplotlib.patches as patches
 import matplotlib.path as path
 from matplotlib import rc
@@ -63,8 +62,7 @@ class graph_animator(animation.TimedAnimation):
         
         (x_train, y_train), (x_test, y_test) = boston_housing.load_data()
         
-        scale = p.StandardScaler().fit(x_train)
-        self.data_series = self.create_transform(scale.transform(x_train), 
+        self.data_series = self.create_transform(x_train, 
                                                  y_train, 
                                                  time_steps=60, 
                                                  delay=40)        
