@@ -19,15 +19,16 @@ rc('animation', html='html5')  # sets animation display from none to html5
 class graph_animator(animation.TimedAnimation):
     
     def __init__(self):
-        self.fig = plt.figure(figsize=(6,6))
-        self.fig.suptitle('Multivariate Analysis', x=0.38, y=0.85, 
-                         horizontalalignment='center',
-                         fontsize=16,
-                         fontweight='bold')
+        self.fig = plt.figure(figsize=(9,9))
+        self.fig.suptitle('Are Any Features Closely Correlated?', 
+                          x=0.5, y=0.85, 
+                          horizontalalignment='center',
+                          fontsize=16,
+                          fontweight='bold')
         # Subplot layout       
         self.gs = gridspec.GridSpec(6,6)
-        self.gs.update(left=0.1,  
-                       right=0.95, 
+        self.gs.update(left=0.14,  
+                       right=0.99, 
                        wspace=0.2,
                        hspace=.1,
                        top=0.95, 
@@ -64,8 +65,8 @@ class graph_animator(animation.TimedAnimation):
         
         self.data_series = self.create_transform(x_train, 
                                                  y_train, 
-                                                 time_steps=60, 
-                                                 delay=40)        
+                                                 time_steps=20, 
+                                                 delay=80)        
 
         self._create_histograms()
         
@@ -86,9 +87,10 @@ class graph_animator(animation.TimedAnimation):
         self.line, = self.ax1.plot(
                          self.data_series[0][2], 
                          self.data_series[0][3], 
-                         'o', c='#FA6367',
-                         markerfacecolor='#FEEAA8', 
-                         markersize=5)
+                         'o', c='black',
+                         markerfacecolor= '#FEEAA8',
+                         linewidth=3,
+                         markersize=8)
         
         animation.TimedAnimation.__init__(self, self.fig, interval=5, blit=True)
             
@@ -312,7 +314,7 @@ def _blit_draw(self, artists, bg_cache):
 if __name__ == "__main__":
 #
 #    # MONKEY PATCH!!
-#    animation.Animation._blit_draw = _blit_draw
+    animation.Animation._blit_draw = _blit_draw
     
     headers = ["Per Capita Crime", 
                "Zoned over 25k sq-ft",
@@ -329,5 +331,6 @@ if __name__ == "__main__":
                "Percent Lower Status"]
 
     ani = graph_animator()
+    
     plt.show()
     
