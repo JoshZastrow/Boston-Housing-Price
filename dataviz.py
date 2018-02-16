@@ -21,7 +21,7 @@ class graph_animator(animation.TimedAnimation):
     def __init__(self):
         self.fig = plt.figure(figsize=(9,9))
         self.fig.suptitle('Are Any Features Closely Correlated?',
-                          x=0.5, y=0.85,
+                          x=0.4, y=0.85,
                           horizontalalignment='center',
                           fontsize=16,
                           fontweight='bold')
