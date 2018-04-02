@@ -16,17 +16,18 @@ from matplotlib import rc
 
 rc('animation', html='html5')  # sets animation display from none to html5
 
+
 class graph_animator(animation.TimedAnimation):
 
     def __init__(self):
-        self.fig = plt.figure(figsize=(9,9))
+        self.fig = plt.figure(figsize=(9, 9))
         self.fig.suptitle('Are Any Features Closely Correlated?',
                           x=0.4, y=0.85,
                           horizontalalignment='center',
                           fontsize=16,
                           fontweight='bold')
         # Subplot layout
-        self.gs = gridspec.GridSpec(6,6)
+        self.gs = gridspec.GridSpec(6, 6)
         self.gs.update(left=0.14,
                        right=0.99,
                        wspace=0.2,
@@ -84,8 +85,9 @@ class graph_animator(animation.TimedAnimation):
 
         self.line, = self.ax1.plot(self.data_series[0][2],
                                    self.data_series[0][3],
-                                   'o', c='black',
-                                   markerfacecolor= '#FEEAA8',
+                                   'o', c='k',
+                                   markerfacecolor='#FEEAA8',
+                                   markeredgecolor='k',
                                    linewidth=3,
                                    markersize=8)
 
@@ -150,7 +152,7 @@ class graph_animator(animation.TimedAnimation):
         x_top = xn
         y_top = yn
 
-        num_verts = self.nbins * (1 + 3 + 1) # 1 move to, 3 vertices, 1 close poly
+        num_verts = self.nbins * (1 + 3 + 1)  # 1 move to, 3 vertices, 1 close poly
         self.verts = np.zeros(shape=(2, num_verts, 2))  # (axis, value, coordinate)
 
         # x axis
@@ -200,7 +202,6 @@ class graph_animator(animation.TimedAnimation):
         self.ax2.set_ylim(x_bottom.min(), x_top.max())
         self.ax3.set_xlim(y_bottom.min(), y_top.max())
 
-
     def create_transform(self, data, time_steps=60, delay=40):
         frame_data = []
         rows, cols = data.shape
@@ -211,7 +212,7 @@ class graph_animator(animation.TimedAnimation):
         next_j = 1
 
         while next_i < cols:
-            next_j = next_i # don't repeat previous comparisons
+            next_j = next_i  # don't repeat previous comparisons
             while next_j < cols:
 
                 x_title = self.headers[curr_i]
@@ -220,8 +221,8 @@ class graph_animator(animation.TimedAnimation):
 
                 # Create the transitioning y data
                 y_data = np.array([np.linspace(data[r, curr_j],
-                                                    data[r, next_j],
-                                                    time_steps) for r in range(rows)])
+                                               data[r, next_j],
+                                               time_steps) for r in range(rows)])
 
                 # Create a list of frames for the transition
                 for t in range(delay):
@@ -251,10 +252,11 @@ class plot_handler():
     """
     ' Plot handler to help me control the shape of my subplots better.
     """
+
     def __init__(self, plot_rows, plot_cols):
         self.rows = plot_rows
         self.cols = plot_cols
-        self.fig = plt.figure(facecolor='white', figsize=(16,16))
+        self.fig = plt.figure(facecolor='white', figsize=(16, 16))
         self.grid = gridspec.GridSpec(self.rows, self.cols)
 
         self.grid.update(left=0.1,
@@ -276,11 +278,10 @@ class plot_handler():
         return name in self.ax
 
     def plot(self, data, plot_name, data_name, ylim=None):
-        self.ax[plot_name].plot(data,  '-', label=data_name, animated=True)
+        self.ax[plot_name].plot(data, '-', label=data_name, animated=True)
 
         if not ylim:
-            self.ax[plot_name].set_ylim([0,ylim])
-
+            self.ax[plot_name].set_ylim([0, ylim])
 
 
 def _blit_draw(self, artists, bg_cache):
@@ -306,7 +307,7 @@ def _blit_draw(self, artists, bg_cache):
 
 
 if __name__ == "__main__":
-#
+    
 #    # MONKEY PATCH!!
 #    animation.Animation._blit_draw = _blit_draw
 
@@ -325,5 +326,5 @@ if __name__ == "__main__":
                "Percent Lower Status"]
 
     ani = graph_animator()
-
+    ani.save(filename='Multivariate_analysis,mp4')
     plt.show()
