@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>NN Model as Flask API</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <h1>Boston Housing Price Predictor</h1>
+        <div id="stylized" class="myform">
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <fieldset>
+                <p><input class="field" type="file" name="image" value="Upload"></p>
+                <p><label for="CRIM">per capita crime rate by town: </label>
+                <input id="CRIM" type="number", value=1.232></p>
+                <p><label for="ZN">proportion of residential land zoned for lots over 25,000 sq.ft.: </label>
+                <input id="ZN" type="number" value=0.0></p>
+                <p><label for="INDUS">proportion of non-retail business acres per town:</label>
+                <input id="INDUS" type="number" value=8.14></p>
+                <p><label for="CHAS">1 for on the Charles River, 0 for otherwise: </label>
+                <input id="CHAS" type="number" value=0></p>
+                <p><label for="NOX">nitric oxides concentration (parts per 10 million):</label>
+                <input id="NOX" type="number" value=.538></p>
+                <p><label for="RM">average number of rooms per dwelling:</label>
+                <input id="RM" type="number" value=6.142></p>
+                <p><label for="AGE">proportion of owner-occupied units built prior to 1940</label>
+                <input id="AGE" type="number" value=91.7></p>
+                <p><label for="DIS">weighted distances to five Boston employment centres</label>
+                <input id="DIS" type="number" value=3.977></p>
+                <p><label for="RAD">index of accessibility to radial highways</label>
+                <input id="RAD" type="number" value=4.0></p>
+                <p><label for="TAX">TAX - full-value property-tax rate per 10,000</label>
+                <input id="TAX" type="number" value=307></p>
+                <p><label for="PTRATIO">pupil-teacher ratio by town</label>
+                <input id="PTRATIO" type="number" value=21.0></p>
+                <p><label for="B">1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town</label>
+                <input id="B" type="number" value=396.9></p>
+                <p><label for="LSTAT">Percent lower status of the population</label>
+                <input id="LSTAT" type="number" value=18.72></p>
+                <input type="submit" value="Predict"> {% if label %} {{ label }} {% endif %}
+           </fieldset>
+           <style>
+            fieldset {width: 900px;}
+            label {
+                text-align: right;
+                width: 700px;
+                float: left;
+                font-weight: bold;}
+            </style>
+       </form>
+
+        </div>
+    </body>
+
+</html>
