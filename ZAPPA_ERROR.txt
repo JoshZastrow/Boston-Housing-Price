@@ -1,0 +1,318 @@
+(env) (Web) C:\Users\joshu\Documents\Code\Machine-Learning\serverless-machine-learning-master>http POST localhost:5000 < bin/payload.json
+HTTP/1.0 200 OK
+Content-Length: 22
+Content-Type: text/html; charset=utf-8
+Date: Wed, 25 Apr 2018 20:16:44 GMT
+Server: Werkzeug/0.12 Python/3.6.5
+
+{
+    "prediction": [
+        2,
+        1
+    ]
+}
+
+(env) (Web) C:\Users\joshu\Documents\Code\Machine-Learning\serverless-machine-learning-master>zappa init
+
+███████╗ █████╗ ██████╗ ██████╗  █████╗
+╚══███╔╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗
+  ███╔╝ ███████║██████╔╝██████╔╝███████║
+ ███╔╝  ██╔══██║██╔═══╝ ██╔═══╝ ██╔══██║
+███████╗██║  ██║██║     ██║     ██║  ██║
+╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝     ╚═╝  ╚═╝
+
+Welcome to Zappa!
+
+Zappa is a system for running server-less Python web applications on AWS Lambda and AWS API Gateway.
+This `init` command will help you create and configure your new Zappa deployment.
+Let's get started!
+
+Your Zappa configuration can support multiple production stages, like 'dev', 'staging', and 'production'.
+What do you want to call this environment (default 'dev'):
+
+AWS Lambda and API Gateway are only available in certain regions. Let's check to make sure you have a profile set up in one that will work.
+Okay, using profile default!
+
+Your Zappa deployments will need to be uploaded to a private S3 bucket.
+If you don't have a bucket yet, we'll create one for you too.
+What do you want call your bucket? (default 'zappa-1wdf1h051'):
+
+It looks like this is a Flask application.
+What's the modular path to your app's function?
+This will likely be something like 'your_module.app'.
+We discovered: api.app.app
+Where is your app's function? (default 'api.app.app'):
+
+You can optionally deploy to all available regions in order to provide fast global service.
+If you are using Zappa for the first time, you probably don't want to do this!
+Would you like to deploy this application [1mglobally[0m? (default 'n') [y/n/(p)rimary]:
+
+Okay, here's your zappa_settings.json:
+
+{
+    "dev": {
+        "app_function": "api.app.app",
+        "aws_region": "us-east-1",
+        "profile_name": "default",
+        "project_name": "serverless-mach",
+        "runtime": "python3.6",
+        "s3_bucket": "zappa-1wdf1h051"
+    }
+}
+
+Does this look [32m[1mokay[0m? (default 'y') [y/n]:
+
+Done! Now you can deploy your Zappa application by executing:
+
+        $ zappa deploy dev
+
+After that, you can update your application code with:
+
+        $ zappa update dev
+
+To learn more, check out our project page on GitHub here: https://github.com/Miserlou/Zappa
+and stop by our Slack channel here: https://slack.zappa.io
+
+Enjoy!,
+ ~ Team Zappa!
+
+(env) (Web) C:\Users\joshu\Documents\Code\Machine-Learning\serverless-machine-learning-master>zappa deploy dev
+Calling deploy for stage dev..
+Creating serverless-mach-dev-ZappaLambdaExecutionRole IAM Role..
+Creating zappa-permissions policy on serverless-mach-dev-ZappaLambdaExecutionRole IAM Role.
+Downloading and installing dependencies..
+ - scipy==1.0.1: Using locally cached manylinux wheel
+ - numpy==1.14.2: Using locally cached manylinux wheel
+ - sqlite==python36: Using precompiled lambda package
+Packaging project as gzipped tarball.
+Downloading and installing dependencies..
+ - sqlite==python36: Using precompiled lambda package
+Packaging project as zip.
+Uploading serverless-mach-dev-1524687571.tar.gz (75.4MiB)..
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 79.1M/79.1M [00:15<00:00, 5.72MB/s]
+Uploading handler_serverless-mach-dev-1524687981.zip (10.1MiB)..
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10.6M/10.6M [00:04<00:00, 2.14MB/s]
+Scheduling..
+Scheduled serverless-mach-dev-zappa-keep-warm-handler.keep_warm_callback with expression rate(4 minutes)!
+Uploading serverless-mach-dev-template-1524688109.json (1.6KiB)..
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1.64K/1.64K [00:00<00:00, 20.8KB/s]
+Waiting for stack serverless-mach-dev to create (this can take a bit)..
+ 75%|█████████████████████████████████████████████████████████████████████████████████████████▎                             | 3/4 [00:09<00:03,  3.16s/res]
+Deploying API Gateway..
+Deployment complete!: https://k1clveeod1.execute-api.us-east-1.amazonaws.com/dev
+
+(env) (Web) C:\Users\joshu\Documents\Code\Machine-Learning\serverless-machine-learning-master>http POST https://k1clveeod1.execute-api.us-east-1.amazonaws.com/dev < bin/payload.json
+HTTP/1.1 500 Internal Server Error
+Connection: keep-alive
+Content-Length: 713
+Content-Type: application/json
+Date: Wed, 25 Apr 2018 20:30:01 GMT
+Via: 1.1 00ba471211aa4c63ba48b34111f64da1.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: xX7peMu63dTG_L-5hN2MqSg79PBP3o_u2XfpKql0RmD3p-UpJv-79A==
+X-Amzn-Trace-Id: sampled=0;root=1-5ae0e549-d1d0e090f6eaa3e1e51b0e84
+X-Cache: Error from cloudfront
+x-amz-apigw-id: F6jDcE8EIAMFYPg=
+x-amzn-RequestId: 6dcb9394-48c7-11e8-a779-9593a2eaedbb
+
+"{'message': 'An uncaught exception happened while servicing this request. You can investigate this with the `zappa tail` command.', 'traceback': ['Traceback (most recent call last):\\n', '  File \"/var/task/handler.py\", line 452, in handler\\n    response = Response.from_app(self.wsgi_app, environ)\\n', '  File \"/var/task/werkzeug/wrappers.py\", line 903, in from_app\\n    return cls(*_run_wsgi_app(app, environ, buffered))\\n', '  File \"/var/task/werkzeug/wrappers.py\", line 57, in _run_wsgi_app\\n    return _run_wsgi_app(*args)\\n', '  File \"/var/task/werkzeug/test.py\", line 884, in run_wsgi_app\\n    app_rv = app(environ, start_response)\\n', \"TypeError: 'NoneType' object is not callable\\n\"]}"
+
+
+(env) (Web) C:\Users\joshu\Documents\Code\Machine-Learning\serverless-machine-learning-master>zappa tail
+Calling tail for stage dev..
+[1524688116975] Instancing..
+[1524688116979] [DEBUG] 2018-04-25T20:28:36.978Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable profile from defaults.
+[1524688116979] [DEBUG] 2018-04-25T20:28:36.979Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable config_file from defaults.
+[1524688116979] [DEBUG] 2018-04-25T20:28:36.979Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable credentials_file from defaults.
+[1524688116979] [DEBUG] 2018-04-25T20:28:36.979Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable data_path from defaults.
+[1524688116983] [DEBUG] 2018-04-25T20:28:36.983Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading JSON file: /var/task/boto3/data/s3/2006-03-01/resources-1.json
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.992Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable region from environment with value 'us-east-1'.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable profile from defaults.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable ca_bundle from defaults.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable profile from defaults.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable credentials_file from defaults.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable config_file from defaults.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable profile from defaults.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable metadata_service_timeout from defaults.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable profile from defaults.
+[1524688116993] [DEBUG] 2018-04-25T20:28:36.993Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable metadata_service_num_attempts from defaults.
+[1524688117017] [DEBUG] 2018-04-25T20:28:37.17Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable profile from defaults.
+[1524688117017] [DEBUG] 2018-04-25T20:28:37.17Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Looking for credentials via: env
+[1524688117017] [INFO] 2018-04-25T20:28:37.17Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Found credentials in environment variables.
+[1524688117017] [DEBUG] 2018-04-25T20:28:37.17Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading JSON file: /var/task/botocore/data/endpoints.json
+[1524688117034] [DEBUG] 2018-04-25T20:28:37.33Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading variable profile from defaults.
+[1524688117034] [DEBUG] 2018-04-25T20:28:37.34Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event choose-service-name: calling handler <function handle_service_name_alias at 0x7fe8dc305d08>
+[1524688117037] [DEBUG] 2018-04-25T20:28:37.37Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading JSON file: /var/task/botocore/data/s3/2006-03-01/service-2.json
+[1524688117073] [DEBUG] 2018-04-25T20:28:37.73Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event creating-client-class.s3: calling handler <function add_generate_presigned_post at 0x7fe8dc058bf8>
+[1524688117073] [DEBUG] 2018-04-25T20:28:37.73Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event creating-client-class.s3: calling handler <function lazy_call.<locals>._handler at 0x7fe8dbde2730>
+[1524688117194] [DEBUG] 2018-04-25T20:28:37.194Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event creating-client-class.s3: calling handler <function add_generate_presigned_url at 0x7fe8dc0589d8>
+[1524688117195] [DEBUG] 2018-04-25T20:28:37.194Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f The s3 config key is not a dictionary type, ignoring its value of: None
+[1524688117214] [DEBUG] 2018-04-25T20:28:37.214Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Setting s3 timeout as (60, 60)
+[1524688117214] [DEBUG] 2018-04-25T20:28:37.214Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading JSON file: /var/task/botocore/data/_retry.json
+[1524688117215] [DEBUG] 2018-04-25T20:28:37.215Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Registering retry handlers for service: s3
+[1524688117232] [DEBUG] 2018-04-25T20:28:37.231Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Defaulting to S3 virtual host style addressing with path style addressing fallback.
+[1524688117232] [DEBUG] 2018-04-25T20:28:37.232Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading s3:s3
+[1524688117233] [DEBUG] 2018-04-25T20:28:37.233Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Loading s3:Object
+[1524688117234] [DEBUG] 2018-04-25T20:28:37.234Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event creating-resource-class.s3.Object: calling handler <function lazy_call.<locals>._handler at 0x7fe8dbded378>
+[1524688117234] [DEBUG] 2018-04-25T20:28:37.234Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Calling s3:get_object with {'Bucket': 'zappa-1wdf1h051', 'Key': 'dev_serverless-mach_current_project.tar.gz'}
+[1524688117235] [DEBUG] 2018-04-25T20:28:37.235Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event before-parameter-build.s3.GetObject: calling handler <function sse_md5 at 0x7fe8dc30e488>
+[1524688117235] [DEBUG] 2018-04-25T20:28:37.235Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event before-parameter-build.s3.GetObject: calling handler <function validate_bucket_name at 0x7fe8dc30e400>
+[1524688117235] [DEBUG] 2018-04-25T20:28:37.235Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event before-parameter-build.s3.GetObject: calling handler <bound method S3RegionRedirector.redirect_from_cache of <botocore.utils.S3RegionRedirector object at 0x7fe8dbab15c0>>
+[1524688117235] [DEBUG] 2018-04-25T20:28:37.235Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event before-parameter-build.s3.GetObject: calling handler <function generate_idempotent_uuid at 0x7fe8dc30e048>
+[1524688117235] [DEBUG] 2018-04-25T20:28:37.235Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event before-call.s3.GetObject: calling handler <function add_expect_header at 0x7fe8dc30e8c8>
+[1524688117235] [DEBUG] 2018-04-25T20:28:37.235Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event before-call.s3.GetObject: calling handler <bound method S3RegionRedirector.set_request_url of <botocore.utils.S3RegionRedirector object at 0x7fe8dbab15c0>>
+[1524688117236] [DEBUG] 2018-04-25T20:28:37.235Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Making request for OperationModel(name=GetObject) (verify_ssl=True) with params: {'url_path': '/zappa-1wdf1h051/dev_serverless-mach_current_project.tar.gz', 'query_string': {}, 'method': 'GET', 'headers': {'User-Agent': 'Boto3/1.7.9 Python/3.6.1 Linux/4.9.91-40.57.amzn1.x86_64 exec-env/AWS_Lambda_python3.6 Botocore/1.10.9 Resource'}, 'body': b'', 'url': 'https://s3.amazonaws.com/zappa-1wdf1h051/dev_serverless-mach_current_project.tar.gz', 'context': {'client_region': 'us-east-1', 'client_config': <botocore.config.Config object at 0x7fe8dbb11da0>, 'has_streaming_input': False, 'auth_type': None, 'signing': {'bucket': 'zappa-1wdf1h051'}}}
+[1524688117236] [DEBUG] 2018-04-25T20:28:37.236Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event request-created.s3.GetObject: calling handler <bound method RequestSigner.handler of <botocore.signers.RequestSigner object at 0x7fe8dbb11400>>
+[1524688117236] [DEBUG] 2018-04-25T20:28:37.236Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event choose-signer.s3.GetObject: calling handler <bound method ClientCreator._default_s3_presign_to_sigv2 of <botocore.client.ClientCreator object at 0x7fe8dc1aa518>>
+[1524688117236] [DEBUG] 2018-04-25T20:28:37.236Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event choose-signer.s3.GetObject: calling handler <function set_operation_specific_signer at 0x7fe8dc30cea0>
+[1524688117236] [DEBUG] 2018-04-25T20:28:37.236Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event before-sign.s3.GetObject: calling handler <function fix_s3_host at 0x7fe8dc07a158>
+[1524688117236] [DEBUG] 2018-04-25T20:28:37.236Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Checking for DNS compatible bucket for: https://s3.amazonaws.com/zappa-1wdf1h051/dev_serverless-mach_current_project.tar.gz
+[1524688117236] [DEBUG] 2018-04-25T20:28:37.236Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f URI updated to: https://zappa-1wdf1h051.s3.amazonaws.com/dev_serverless-mach_current_project.tar.gz
+[1524688117237] [DEBUG] 2018-04-25T20:28:37.237Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Calculating signature using v4 auth.
+[1524688117237] [DEBUG] 2018-04-25T20:28:37.237Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f CanonicalRequest:
+GET
+/dev_serverless-mach_current_project.tar.gz
+
+host:zappa-1wdf1h051.s3.amazonaws.com
+x-amz-content-sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+x-amz-date:20180425T202837Z
+x-amz-security-token:FQoDYXdzEH4aDMt0dOW2znOL4zUqkiLsAefehWbVfPHg3LdCNPIZ8XhYecZoQ57iTg3kkfP/QFA6D1dpBAFppfcO51jhLviOI8SDAGNFBlPA9yLgczecfDFNsacyOXuJjMM9YNXegSZ+vi5rZXgg3aBIl1aRJmmVfvgmdLrfFugP5F70O/ZxQGdLLHUGSGQ7yUvdH7iYoWDjwQwO3Fcx6jSy1ORJIQlMJ5FnTLZwcaASSQ85n7SadbVe46i3pnFOQqAo9ispM1fCYDqsSg8UATIYtVMiiQNfqlBF65jIXbCWBAyu3YwB8pLHGbxh4/VSoGsmu1KcGrG6Q51g4h8vreNsQBsGKPPJg9cF
+
+host;x-amz-content-sha256;x-amz-date;x-amz-security-token
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+[1524688117237] [DEBUG] 2018-04-25T20:28:37.237Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f StringToSign:
+AWS4-HMAC-SHA256
+20180425T202837Z
+20180425/us-east-1/s3/aws4_request
+69a208ce09de1e3ff0e740e5728edf4ac9ef9001828b303f2436154a89d3fd5c
+[1524688117237] [DEBUG] 2018-04-25T20:28:37.237Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Signature:
+9c50c56355c5f97d4f011ea6e1da9cce01fe8e98d567a8542c68278ae4a5325f
+[1524688117254] [DEBUG] 2018-04-25T20:28:37.253Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Sending http request: <PreparedRequest [GET]>
+[1524688117254] [INFO] 2018-04-25T20:28:37.254Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Starting new HTTPS connection (1): zappa-1wdf1h051.s3.amazonaws.com
+[1524688117344] [DEBUG] 2018-04-25T20:28:37.344Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f "GET /dev_serverless-mach_current_project.tar.gz HTTP/1.1" 200 79062998
+[1524688117345] [DEBUG] 2018-04-25T20:28:37.345Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Response headers: {'x-amz-id-2': 'aT2JV9ptOw8nyDeqyXUThj3V8nLt9273Z4/cLRdIB+QjC6/3xX6E5ifp04CzRtZG8z7CXwgKDbg=', 'x-amz-request-id': '4131EB09CB848ABB', 'date': 'Wed, 25 Apr 2018 20:28:38 GMT', 'last-modified': 'Wed, 25 Apr 2018 20:28:25 GMT', 'etag': '"f764dd3305c88143b12e6683edbdbf46-10"', 'accept-ranges': 'bytes', 'content-type': 'binary/octet-stream', 'content-length': '79062998', 'server': 'AmazonS3'}
+[1524688117345] [DEBUG] 2018-04-25T20:28:37.345Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Response body:
+<botocore.response.StreamingBody object at 0x7fe8dba58f98>
+[1524688117346] [DEBUG] 2018-04-25T20:28:37.346Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event needs-retry.s3.GetObject: calling handler <botocore.retryhandler.RetryHandler object at 0x7fe8dba10cc0>
+[1524688117346] [DEBUG] 2018-04-25T20:28:37.346Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f No retry needed.
+[1524688117346] [DEBUG] 2018-04-25T20:28:37.346Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Event needs-retry.s3.GetObject: calling handler <bound method S3RegionRedirector.redirect_from_error of <botocore.utils.S3RegionRedirector object at 0x7fe8dbab15c0>>
+[1524688117346] [DEBUG] 2018-04-25T20:28:37.346Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Response: {'ResponseMetadata': {'RequestId': '4131EB09CB848ABB', 'HostId': 'aT2JV9ptOw8nyDeqyXUThj3V8nLt9273Z4/cLRdIB+QjC6/3xX6E5ifp04CzRtZG8z7CXwgKDbg=', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amz-id-2': 'aT2JV9ptOw8nyDeqyXUThj3V8nLt9273Z4/cLRdIB+QjC6/3xX6E5ifp04CzRtZG8z7CXwgKDbg=', 'x-amz-request-id': '4131EB09CB848ABB', 'date': 'Wed, 25 Apr 2018 20:28:38 GMT', 'last-modified': 'Wed, 25 Apr 2018 20:28:25 GMT', 'etag': '"f764dd3305c88143b12e6683edbdbf46-10"', 'accept-ranges': 'bytes', 'content-type': 'binary/octet-stream', 'content-length': '79062998', 'server': 'AmazonS3'}, 'RetryAttempts': 0}, 'AcceptRanges': 'bytes', 'LastModified': datetime.datetime(2018, 4, 25, 20, 28, 25, tzinfo=tzutc()), 'ContentLength': 79062998, 'ETag': '"f764dd3305c88143b12e6683edbdbf46-10"', 'ContentType': 'binary/octet-stream', 'Metadata': {}, 'Body': <botocore.response.StreamingBody object at 0x7fe8dba58f98>}
+[1524688123523] Instancing..
+[1524688123526] [DEBUG] 2018-04-25T20:28:43.526Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable profile from defaults.
+[1524688123526] [DEBUG] 2018-04-25T20:28:43.526Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable config_file from defaults.
+[1524688123526] [DEBUG] 2018-04-25T20:28:43.526Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable credentials_file from defaults.
+[1524688123527] [DEBUG] 2018-04-25T20:28:43.526Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable data_path from defaults.
+[1524688123536] [DEBUG] 2018-04-25T20:28:43.536Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading JSON file: /var/task/boto3/data/s3/2006-03-01/resources-1.json
+[1524688123537] [DEBUG] 2018-04-25T20:28:43.537Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable region from environment with value 'us-east-1'.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.537Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable profile from defaults.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.538Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable ca_bundle from defaults.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.538Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable profile from defaults.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.538Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable credentials_file from defaults.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.538Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable config_file from defaults.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.538Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable profile from defaults.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.538Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable metadata_service_timeout from defaults.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.538Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable profile from defaults.
+[1524688123538] [DEBUG] 2018-04-25T20:28:43.538Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable metadata_service_num_attempts from defaults.
+[1524688123575] [DEBUG] 2018-04-25T20:28:43.572Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable profile from defaults.
+[1524688123575] [DEBUG] 2018-04-25T20:28:43.573Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Looking for credentials via: env
+[1524688123575] [INFO] 2018-04-25T20:28:43.573Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Found credentials in environment variables.
+[1524688123575] [DEBUG] 2018-04-25T20:28:43.573Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading JSON file: /var/task/botocore/data/endpoints.json
+[1524688123595] [DEBUG] 2018-04-25T20:28:43.592Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading variable profile from defaults.
+[1524688123595] [DEBUG] 2018-04-25T20:28:43.593Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event choose-service-name: calling handler <function handle_service_name_alias at 0x7ff80514fd08>
+[1524688123615] [DEBUG] 2018-04-25T20:28:43.615Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading JSON file: /var/task/botocore/data/s3/2006-03-01/service-2.json
+[1524688123655] [DEBUG] 2018-04-25T20:28:43.655Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event creating-client-class.s3: calling handler <function add_generate_presigned_post at 0x7ff804ea2bf8>
+[1524688123675] [DEBUG] 2018-04-25T20:28:43.655Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event creating-client-class.s3: calling handler <function lazy_call.<locals>._handler at 0x7ff804c2c730>
+[1524688123855] [DEBUG] 2018-04-25T20:28:43.853Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event creating-client-class.s3: calling handler <function add_generate_presigned_url at 0x7ff804ea29d8>
+[1524688123855] [DEBUG] 2018-04-25T20:28:43.854Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d The s3 config key is not a dictionary type, ignoring its value of: None
+[1524688123879] [DEBUG] 2018-04-25T20:28:43.876Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Setting s3 timeout as (60, 60)
+[1524688123879] [DEBUG] 2018-04-25T20:28:43.876Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading JSON file: /var/task/botocore/data/_retry.json
+[1524688123879] [DEBUG] 2018-04-25T20:28:43.877Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Registering retry handlers for service: s3
+[1524688123879] [DEBUG] 2018-04-25T20:28:43.878Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Defaulting to S3 virtual host style addressing with path style addressing fallback.
+[1524688123879] [DEBUG] 2018-04-25T20:28:43.878Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading s3:s3
+[1524688123895] [DEBUG] 2018-04-25T20:28:43.893Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Loading s3:Object
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.911Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event creating-resource-class.s3.Object: calling handler <function lazy_call.<locals>._handler at 0x7ff804c37378>
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.912Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Calling s3:get_object with {'Bucket': 'zappa-1wdf1h051', 'Key': 'dev_serverless-mach_current_project.tar.gz'}
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.912Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event before-parameter-build.s3.GetObject: calling handler <function sse_md5 at 0x7ff805158488>
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.912Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event before-parameter-build.s3.GetObject: calling handler <function validate_bucket_name at 0x7ff805158400>
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.912Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event before-parameter-build.s3.GetObject: calling handler <bound method S3RegionRedirector.redirect_from_cache of <botocore.utils.S3RegionRedirector object at 0x7ff804901908>>
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.912Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event before-parameter-build.s3.GetObject: calling handler <function generate_idempotent_uuid at 0x7ff805158048>
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.913Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event before-call.s3.GetObject: calling handler <function add_expect_header at 0x7ff8051588c8>
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.913Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event before-call.s3.GetObject: calling handler <bound method S3RegionRedirector.set_request_url of <botocore.utils.S3RegionRedirector object at 0x7ff804901908>>
+[1524688123914] [DEBUG] 2018-04-25T20:28:43.913Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Making request for OperationModel(name=GetObject) (verify_ssl=True) with params: {'url_path': '/zappa-1wdf1h051/dev_serverless-mach_current_project.tar.gz', 'query_string': {}, 'method': 'GET', 'headers': {'User-Agent': 'Boto3/1.7.9 Python/3.6.1 Linux/4.9.91-40.57.amzn1.x86_64 exec-env/AWS_Lambda_python3.6 Botocore/1.10.9 Resource'}, 'body': b'', 'url': 'https://s3.amazonaws.com/zappa-1wdf1h051/dev_serverless-mach_current_project.tar.gz', 'context': {'client_region': 'us-east-1', 'client_config': <botocore.config.Config object at 0x7ff80496c198>, 'has_streaming_input': False, 'auth_type': None, 'signing': {'bucket': 'zappa-1wdf1h051'}}}
+[1524688123915] [DEBUG] 2018-04-25T20:28:43.914Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event request-created.s3.GetObject: calling handler <bound method RequestSigner.handler of <botocore.signers.RequestSigner object at 0x7ff8049597b8>>
+[1524688123915] [DEBUG] 2018-04-25T20:28:43.914Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event choose-signer.s3.GetObject: calling handler <bound method ClientCreator._default_s3_presign_to_sigv2 of <botocore.client.ClientCreator object at 0x7ff804ff08d0>>
+[1524688123915] [DEBUG] 2018-04-25T20:28:43.914Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event choose-signer.s3.GetObject: calling handler <function set_operation_specific_signer at 0x7ff805156ea0>
+[1524688123915] [DEBUG] 2018-04-25T20:28:43.914Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event before-sign.s3.GetObject: calling handler <function fix_s3_host at 0x7ff804ebe158>
+[1524688123915] [DEBUG] 2018-04-25T20:28:43.914Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Checking for DNS compatible bucket for: https://s3.amazonaws.com/zappa-1wdf1h051/dev_serverless-mach_current_project.tar.gz
+[1524688123915] [DEBUG] 2018-04-25T20:28:43.915Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d URI updated to: https://zappa-1wdf1h051.s3.amazonaws.com/dev_serverless-mach_current_project.tar.gz
+[1524688123935] [DEBUG] 2018-04-25T20:28:43.931Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Calculating signature using v4 auth.
+[1524688123935] [DEBUG] 2018-04-25T20:28:43.931Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d CanonicalRequest:
+GET
+/dev_serverless-mach_current_project.tar.gz
+
+host:zappa-1wdf1h051.s3.amazonaws.com
+x-amz-content-sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+x-amz-date:20180425T202843Z
+x-amz-security-token:FQoDYXdzEH4aDMt0dOW2znOL4zUqkiLsAefehWbVfPHg3LdCNPIZ8XhYecZoQ57iTg3kkfP/QFA6D1dpBAFppfcO51jhLviOI8SDAGNFBlPA9yLgczecfDFNsacyOXuJjMM9YNXegSZ+vi5rZXgg3aBIl1aRJmmVfvgmdLrfFugP5F70O/ZxQGdLLHUGSGQ7yUvdH7iYoWDjwQwO3Fcx6jSy1ORJIQlMJ5FnTLZwcaASSQ85n7SadbVe46i3pnFOQqAo9ispM1fCYDqsSg8UATIYtVMiiQNfqlBF65jIXbCWBAyu3YwB8pLHGbxh4/VSoGsmu1KcGrG6Q51g4h8vreNsQBsGKPPJg9cF
+
+host;x-amz-content-sha256;x-amz-date;x-amz-security-token
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+[1524688123935] [DEBUG] 2018-04-25T20:28:43.932Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d StringToSign:
+AWS4-HMAC-SHA256
+20180425T202843Z
+20180425/us-east-1/s3/aws4_request
+aae7f755d392d4e4cae92ae9349cda501b4a77a7515131728b5341454869dcf4
+[1524688123935] [DEBUG] 2018-04-25T20:28:43.932Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Signature:
+2c304c3495d770e9d18e4ccce55ddb5a1971f4ed071c12c1e327c0a4eeb627a7
+[1524688123936] [DEBUG] 2018-04-25T20:28:43.935Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Sending http request: <PreparedRequest [GET]>
+[1524688123937] [INFO] 2018-04-25T20:28:43.937Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Starting new HTTPS connection (1): zappa-1wdf1h051.s3.amazonaws.com
+[1524688124028] [DEBUG] 2018-04-25T20:28:44.27Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d "GET /dev_serverless-mach_current_project.tar.gz HTTP/1.1" 200 79062998
+[1524688124028] [DEBUG] 2018-04-25T20:28:44.28Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Response headers: {'x-amz-id-2': '3Lt8pWTEwr0EvoPfw/tIlhyU6tKuQRUpGLtl2qdtqE+s1zFB2RN5GAgiXek+bF4Bbv16a/xWvfM=', 'x-amz-request-id': '4004EFFEC1979B76', 'date': 'Wed, 25 Apr 2018 20:28:44 GMT', 'last-modified': 'Wed, 25 Apr 2018 20:28:25 GMT', 'etag': '"f764dd3305c88143b12e6683edbdbf46-10"', 'accept-ranges': 'bytes', 'content-type': 'binary/octet-stream', 'content-length': '79062998', 'server': 'AmazonS3'}
+[1524688124028] [DEBUG] 2018-04-25T20:28:44.28Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Response body:
+<botocore.response.StreamingBody object at 0x7ff8048b2a58>
+[1524688124029] [DEBUG] 2018-04-25T20:28:44.29Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event needs-retry.s3.GetObject: calling handler <botocore.retryhandler.RetryHandler object at 0x7ff804901048>
+[1524688124029] [DEBUG] 2018-04-25T20:28:44.29Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d No retry needed.
+[1524688124029] [DEBUG] 2018-04-25T20:28:44.29Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Event needs-retry.s3.GetObject: calling handler <bound method S3RegionRedirector.redirect_from_error of <botocore.utils.S3RegionRedirector object at 0x7ff804901908>>
+[1524688124029] [DEBUG] 2018-04-25T20:28:44.29Z 3f0ae381-48c7-11e8-ba7a-610e22687c4d Response: {'ResponseMetadata': {'RequestId': '4004EFFEC1979B76', 'HostId': '3Lt8pWTEwr0EvoPfw/tIlhyU6tKuQRUpGLtl2qdtqE+s1zFB2RN5GAgiXek+bF4Bbv16a/xWvfM=', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amz-id-2': '3Lt8pWTEwr0EvoPfw/tIlhyU6tKuQRUpGLtl2qdtqE+s1zFB2RN5GAgiXek+bF4Bbv16a/xWvfM=', 'x-amz-request-id': '4004EFFEC1979B76', 'date': 'Wed, 25 Apr 2018 20:28:44 GMT', 'last-modified': 'Wed, 25 Apr 2018 20:28:25 GMT', 'etag': '"f764dd3305c88143b12e6683edbdbf46-10"', 'accept-ranges': 'bytes', 'content-type': 'binary/octet-stream', 'content-length': '79062998', 'server': 'AmazonS3'}, 'RetryAttempts': 0}, 'AcceptRanges': 'bytes', 'LastModified': datetime.datetime(2018, 4, 25, 20, 28, 25, tzinfo=tzutc()), 'ContentLength': 79062998, 'ETag': '"f764dd3305c88143b12e6683edbdbf46-10"', 'ContentType': 'binary/octet-stream', 'Metadata': {}, 'Body': <botocore.response.StreamingBody object at 0x7ff8048b2a58>}
+[1524688129994] Failed to find library...right filename?
+[1524688130015] No module named 'api.app': ModuleNotFoundError
+Traceback (most recent call last):
+  File "/var/task/handler.py", line 509, in lambda_handler
+  return LambdaHandler.lambda_handler(event, context)
+  File "/var/task/handler.py", line 237, in lambda_handler
+  handler = cls()
+  File "/var/task/handler.py", line 129, in __init__
+  self.app_module = importlib.import_module(self.settings.APP_MODULE)
+  File "/var/lang/lib/python3.6/importlib/__init__.py", line 126, in import_module
+  return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 978, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 961, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 948, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'api.app'
+[1524688136176] Failed to find library...right filename?
+[1524688136195] No module named 'api.app': ModuleNotFoundError
+Traceback (most recent call last):
+  File "/var/task/handler.py", line 509, in lambda_handler
+  return LambdaHandler.lambda_handler(event, context)
+  File "/var/task/handler.py", line 237, in lambda_handler
+  handler = cls()
+  File "/var/task/handler.py", line 129, in __init__
+  self.app_module = importlib.import_module(self.settings.APP_MODULE)
+  File "/var/lang/lib/python3.6/importlib/__init__.py", line 126, in import_module
+  return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 978, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 961, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 948, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'api.app'
+[1524688189191] [DEBUG] 2018-04-25T20:29:49.182Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Zappa Event: {'time': '2018-04-25T20:28:30Z', 'detail-type': 'Scheduled Event', 'source': 'aws.events', 'account': '084485918776', 'region': 'us-east-1', 'detail': {}, 'version': '0', 'resources': ['arn:aws:events:us-east-1:084485918776:rule/serverless-mach-dev-zappa-keep-warm-handler.keep_warm_callback'], 'id': 'f5b7e842-fcd3-4d0b-747d-abd5942040d3', 'kwargs': {}}
+[1524688189191] [DEBUG] 2018-04-25T20:29:49.182Z 3ae6b587-48c7-11e8-8f7e-f9ad0ebd826f Zappa Event: {}
+[1524688201431] [DEBUG] 2018-04-25T20:30:01.421Z 6de0c974-48c7-11e8-834c-33119bd68dee Zappa Event: {'resource': '/', 'path': '/', 'httpMethod': 'POST', 'headers': {'Accept': 'application/json, */*', 'Accept-Encoding': 'gzip, deflate', 'CloudFront-Forwarded-Proto': 'https', 'CloudFront-Is-Desktop-Viewer': 'true', 'CloudFront-Is-Mobile-Viewer': 'false', 'CloudFront-Is-SmartTV-Viewer': 'false', 'CloudFront-Is-Tablet-Viewer': 'false', 'CloudFront-Viewer-Country': 'US', 'Content-Type': 'application/json', 'Host': 'k1clveeod1.execute-api.us-east-1.amazonaws.com', 'User-Agent': 'HTTPie/0.9.9', 'Via': '1.1 00ba471211aa4c63ba48b34111f64da1.cloudfront.net (CloudFront)', 'X-Amz-Cf-Id': '2QAg8vKpR8Jber8_uo_5MG2GmziYxc840k18rlwidN4ILBAMAhNdrw==', 'X-Amzn-Trace-Id': 'Root=1-5ae0e549-39ffcf1cd224fcb405fcda04', 'X-Forwarded-For': '204.9.220.50, 52.46.29.76', 'X-Forwarded-Port': '443', 'X-Forwarded-Proto': 'https'}, 'queryStringParameters': None, 'pathParameters': None, 'stageVariables': None, 'requestContext': {'resourceId': '4p6uj8w403', 'resourcePath': '/', 'httpMethod': 'POST', 'extendedRequestId': 'F6jDcE8EIAMFYPg=', 'requestTime': '25/Apr/2018:20:30:01 +0000', 'path': '/dev', 'accountId': '084485918776', 'protocol': 'HTTP/1.1', 'stage': 'dev', 'requestTimeEpoch': 1524688201255, 'requestId': '6dcb9394-48c7-11e8-a779-9593a2eaedbb', 'identity': {'cognitoIdentityPoolId': None, 'accountId': None, 'cognitoIdentityId': None, 'caller': None, 'sourceIp': '204.9.220.50', 'accessKey': None, 'cognitoAuthenticationType': None, 'cognitoAuthenticationProvider': None, 'userArn': None, 'userAgent': 'HTTPie/0.9.9', 'user': None}, 'apiId': 'k1clveeod1'}, 'body': 'ewogICJkYXRhIjogWwogICAgWwogICAgICA2LjIsCiAgICAgIDMuNAogICAgXSwKICAgIFsKICAgICAgNi4yLAogICAgICAxCiAgICBdCiAgXQp9', 'isBase64Encoded': True}
+[1524688201436] 'NoneType' object is not callable
+[1524688356500] [DEBUG] 2018-04-25T20:32:36.500Z ca4744c7-48c7-11e8-8f80-fd9560054416 Zappa Event: {'time': '2018-04-25T20:32:30Z', 'detail-type': 'Scheduled Event', 'source': 'aws.events', 'account': '084485918776', 'region': 'us-east-1', 'detail': {}, 'version': '0', 'resources': ['arn:aws:events:us-east-1:084485918776:rule/serverless-mach-dev-zappa-keep-warm-handler.keep_warm_callback'], 'id': '184ee4f4-cbbb-8a57-f18b-b542b7f50b80', 'kwargs': {}}
+[1524688356500] [DEBUG] 2018-04-25T20:32:36.500Z ca4744c7-48c7-11e8-8f80-fd9560054416 Zappa Event: {}
+[1524688596211] [DEBUG] 2018-04-25T20:36:36.199Z 58f1a35f-48c8-11e8-b288-219fe91ea70e Zappa Event: {'time': '2018-04-25T20:36:30Z', 'detail-type': 'Scheduled Event', 'source': 'aws.events', 'account': '084485918776', 'region': 'us-east-1', 'detail': {}, 'version': '0', 'resources': ['arn:aws:events:us-east-1:084485918776:rule/serverless-mach-dev-zappa-keep-warm-handler.keep_warm_callback'], 'id': '96205111-e97d-c115-bc5a-c5c1fc5a8924', 'kwargs': {}}
+[1524688596211] [DEBUG] 2018-04-25T20:36:36.200Z 58f1a35f-48c8-11e8-b288-219fe91ea70e Zappa Event: {}
+[1524688835971] [DEBUG] 2018-04-25T20:40:35.963Z e806f8c1-48c8-11e8-9f04-7b5203920b47 Zappa Event: {'time': '2018-04-25T20:40:30Z', 'detail-type': 'Scheduled Event', 'source': 'aws.events', 'account': '084485918776', 'region': 'us-east-1', 'detail': {}, 'version': '0', 'resources': ['arn:aws:events:us-east-1:084485918776:rule/serverless-mach-dev-zappa-keep-warm-handler.keep_warm_callback'], 'id': 'a98db835-7603-1e3e-4d4e-9132473c58c7', 'kwargs': {}}
+[1524688835971] [DEBUG] 2018-04-25T20:40:35.964Z e806f8c1-48c8-11e8-9f04-7b5203920b47 Zappa Event: {}
+
+
+
