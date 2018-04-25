@@ -264,4 +264,4 @@ if __name__ == "__main__":
     print(round(mae * 1000, 2))
 
     # Dump Model
-    dill.dump(best_model, open("app/model/model.pkl", "wb"))
+    dill.dump(best_model, open("model.pkl", "wb"))
